@@ -15,7 +15,7 @@ public class AddStudentPanel {
     private Dialog<Student> dialog = new Dialog<>();
 
     public AddStudentPanel(List<String> columnNames) {
-        dialog.setTitle("添加信息");
+        dialog.setTitle("添加");
         dialog.setHeaderText(null);
         StudentUI userInterface = new StudentUI(columnNames);
         dialog.getDialogPane().setContent(userInterface);

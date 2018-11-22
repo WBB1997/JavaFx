@@ -3,7 +3,9 @@ import Charactor.Student;
 import Util.InfoManager;
 import Util.XmlUtil;
 import Windows.AddStudentPanel;
+import Windows.UpdateStudentPanel;
 import javafx.application.Application;
+import javafx.beans.property.ReadOnlyProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
@@ -56,6 +58,9 @@ public class Main extends Application {
         table.setItems(data);
         //设定自适应列宽
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        // 添加右键菜单
+        table.setContextMenu(new popMenu());
+        table.setId("table-view");
         //下半部分
         HBox bottom = new HBox();
         bottom.setSpacing(3);
@@ -74,6 +79,8 @@ public class Main extends Application {
         ((BorderPane) scene.getRoot()).setCenter(table);
         ((BorderPane) scene.getRoot()).setBottom(bottom);
         stage.setScene(scene);
+        // 加载css样式
+        scene.getStylesheets().add( getClass().getResource("tableview.css") .toExternalForm());
         stage.show();
         // 触发事件
         flash.setOnAction(event -> {
@@ -151,12 +158,58 @@ public class Main extends Application {
 
     private void dosomething(){
         if(!flag) {
-            InfoManager infoManager = (InfoManager) XmlUtil.getBean();
-            table.setItems(FXCollections.observableArrayList((infoManager.get())));
+            table.setItems(FXCollections.observableArrayList((((InfoManager) XmlUtil.getBean()).get())));
             index.setText(Integer.toString(PageControl.getPage() + 1));
-        }else {
-            System.out.println("1");
+        }else
             search.fire();
+    }
+
+    private class popMenu extends ContextMenu {
+        private popMenu() {
+            MenuItem delMenuItem = new MenuItem("删除");
+            MenuItem updMenuItem = new MenuItem("更新");
+            delMenuItem.setOnAction(event -> {
+                ReadOnlyProperty<Student> itemProperty = table.getSelectionModel().selectedItemProperty();
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Information");
+                alert.setHeaderText("警告");
+                alert.setContentText("确定要删除吗？");
+                Optional<ButtonType> result = alert.showAndWait();
+                if(result.isPresent() && (result.get() == ButtonType.OK)) {
+                    alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Information");
+                    alert.setHeaderText(null);
+                    alert.setContentText(((InfoManager) XmlUtil.getBean()).delete(itemProperty.getValue()));
+                    alert.showAndWait();
+                    dosomething();
+                }
+                event.consume();
+            });
+            updMenuItem.setOnAction(event -> {
+                ReadOnlyProperty<Student> itemProperty = table.getSelectionModel().selectedItemProperty();
+                UpdateStudentPanel updateStudentPanel = new UpdateStudentPanel(((InfoManager) XmlUtil.getBean()).getColumnNames(), itemProperty.getValue());
+                Optional<Student> result;
+                boolean flag = true;
+                while (flag) {
+                    result = updateStudentPanel.showAndWait();
+                    if (result.isPresent()) {
+                        Student student = result.get();
+                        String state = ((InfoManager) XmlUtil.getBean()).update(itemProperty.getValue(), student);
+                        if ("更新成功！".equals(state))
+                            flag = false;
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("Information");
+                        alert.setHeaderText(null);
+                        alert.setContentText(state);
+                        alert.showAndWait();
+                    }else
+                        flag = false;
+                }
+                dosomething();
+            });
+
+            getItems().add(delMenuItem);
+            getItems().add(updMenuItem);
         }
     }
 }

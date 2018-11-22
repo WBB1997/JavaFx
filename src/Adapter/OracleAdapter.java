@@ -124,10 +124,12 @@ public class OracleAdapter implements InfoManager {
         head.deleteCharAt(head.length() - 1);
         return "SELECT " + head + " FROM (SELECT tmp.*, ROWNUM rn FROM (" +
                 sql +
-                " ORDER BY SNO) tmp WHERE ROWNUM <= " +
+//                " ORDER BY SNO) tmp WHERE ROWNUM <= " +
+                ") tmp WHERE ROWNUM <= " +
                 Integer.toString(end) +
                 ") WHERE rn >= " +
                 Integer.toString(start);
+//                + "ORDER BY SNO";
     }
 
     private void setRowCount(String sql) {
