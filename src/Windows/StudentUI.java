@@ -3,10 +3,7 @@ package Windows;
 
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,13 +22,14 @@ class StudentUI extends BorderPane {
         for (int i = 0; i < size; i++)
             fields[i] = new TextField();
         VBox innerPanelCenter = new VBox();
-        innerPanelCenter.setSpacing(3);
+        innerPanelCenter.setSpacing(5);
         innerPanelCenter.setAlignment(Pos.CENTER_LEFT);
         for (int i = 0; i < size; i++) {
             innerPanelCenter.getChildren().add(labels[i]);
             innerPanelCenter.getChildren().add(fields[i]);
         }
-        setCenter(innerPanelCenter);
+        setTop(innerPanelCenter);
+        setMinWidth(400);
     }
 
     TextField[] getFields() {

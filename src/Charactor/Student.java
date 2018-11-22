@@ -93,13 +93,13 @@ public class Student {
         InfoList = list;
         for(int i = 0; i < InfoList.size(); i++){
             switch (i){
-                case 0: Sno.setValue(InfoList.get(i));
-                case 1: Sname.setValue(InfoList.get(i));
-                case 2: Ssex.setValue(InfoList.get(i));
-                case 3: Sage.setValue(InfoList.get(i));
-                case 4: Sdept.setValue(InfoList.get(i));
-                case 5: Cno.setValue(InfoList.get(i));
-                case 6: Grade.setValue(InfoList.get(i));
+                case 0: Sno.setValue(InfoList.get(i));break;
+                case 1: Sname.setValue(InfoList.get(i));break;
+                case 2: Ssex.setValue(InfoList.get(i));break;
+                case 3: Sage.setValue(InfoList.get(i));break;
+                case 4: Sdept.setValue(InfoList.get(i));break;
+                case 5: Cno.setValue(InfoList.get(i));break;
+                case 6: Grade.setValue(InfoList.get(i));break;
             }
         }
     }

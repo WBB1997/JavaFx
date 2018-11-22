@@ -153,10 +153,18 @@ public class OracleAdapter implements InfoManager {
         ps.setString(index, stu.getSno());
         ps.setString(index + 1, stu.getSname());
         ps.setString(index + 2, stu.getSsex());
-        ps.setInt(index + 3, Integer.parseInt(stu.getSage()));
+        try {
+            ps.setInt(index + 3, Integer.parseInt(stu.getSage()));
+        }catch (NumberFormatException e){
+            throw new SQLException("Sage 必须为数字");
+        }
         ps.setString(index + 4, stu.getSdept());
         ps.setString(index + 5, stu.getCno());
-        ps.setInt(index + 6, Integer.parseInt(stu.getGrade()));
+        try {
+            ps.setInt(index + 6, Integer.parseInt(stu.getGrade()));
+        }catch (NumberFormatException e){
+            throw new SQLException("Grade 必须为数字");
+        }
     }
 
     private void closeResource(Connection conn, Statement st, ResultSet rs) {

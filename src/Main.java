@@ -10,19 +10,15 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.*;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.paint.Color;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.util.Pair;
 
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Consumer;
 
 public class Main extends Application {
     private boolean flag = false;
@@ -79,7 +75,6 @@ public class Main extends Application {
         ((BorderPane) scene.getRoot()).setBottom(bottom);
         stage.setScene(scene);
         stage.show();
-
         // 触发事件
         flash.setOnAction(event -> {
             PageControl.setFirstPage();
@@ -102,7 +97,6 @@ public class Main extends Application {
             }
             index.setText(Integer.toString(PageControl.getPage() + 1));
         });
-
         first.setOnAction(event -> {
             PageControl.setFirstPage();
             dosomething();
@@ -121,13 +115,24 @@ public class Main extends Application {
         });
         add.setOnAction(event -> {
             AddStudentPanel addStudentPanel = new AddStudentPanel(((InfoManager) XmlUtil.getBean()).getColumnNames());
-            Optional<Pair<String, String>> result = addStudentPanel.showAndWait();
-            result.ifPresent(new Consumer<Pair<String, String>>() {
-                @Override
-                public void accept(Pair<String, String> stringStringPair) {
-                    System.out.println(stringStringPair.getKey() + " " +stringStringPair.getValue());
-                }
-            });
+            Optional<Student> result;
+            boolean flag = true;
+            while (flag) {
+                result = addStudentPanel.showAndWait();
+                if (result.isPresent()) {
+                    Student student = result.get();
+                    String state = ((InfoManager) XmlUtil.getBean()).add(student);
+                    if ("添加成功！".equals(state))
+                        flag = false;
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Information");
+                    alert.setHeaderText(null);
+                    alert.setContentText(state);
+                    alert.showAndWait();
+                }else
+                    flag = false;
+            }
+            dosomething();
         });
     }
 
