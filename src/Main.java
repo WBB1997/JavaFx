@@ -80,7 +80,7 @@ public class Main extends Application {
         ((BorderPane) scene.getRoot()).setBottom(bottom);
         stage.setScene(scene);
         // 加载css样式
-        scene.getStylesheets().add( getClass().getResource("tableview.css") .toExternalForm());
+//        scene.getStylesheets().add( getClass().getResource("tableview.css") .toExternalForm());
         stage.show();
         // 触发事件
         flash.setOnAction(event -> {
