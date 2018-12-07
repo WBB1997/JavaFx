@@ -3,7 +3,7 @@ package Adapter;
 public class PageControl {
     private static int page = 0;
     private static int rowCount = 0;
-    private static int pageSize = 20;
+    private static int pageSize = 10;
     private static final int firstPage = 0;
     private static final int endPage = 999;
     private static final int midPage = 250;
@@ -46,7 +46,7 @@ public class PageControl {
         PageControl.pageSize = pageSize;
     }
 
-    public static int getPageSize() {
+    static int getPageSize() {
         return pageSize;
     }
 
@@ -54,7 +54,7 @@ public class PageControl {
         PageControl.page = page;
     }
 
-    public static int getRowCount() {
+    static int getRowCount() {
         return rowCount;
     }
 
