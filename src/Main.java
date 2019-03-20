@@ -34,7 +34,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) {
-        stage.setTitle("学生成绩管理系统");
+        stage.setTitle("学生成绩管理系统-JavaFx");
         Scene scene = new Scene(new BorderPane(), 600, 400, Color.RED);
         // 上半部分
         HBox top = new HBox();
@@ -60,7 +60,7 @@ public class Main extends Application {
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         // 添加右键菜单
         table.setContextMenu(new popMenu());
-        table.setId("table-view");
+//        table.setId("table-view");
         //下半部分
         HBox bottom = new HBox();
         bottom.setSpacing(3);
@@ -73,7 +73,7 @@ public class Main extends Application {
         index.setPrefColumnCount(2);
         index.setAlignment(Pos.CENTER);
         bottom.setAlignment(Pos.CENTER);
-        bottom.getChildren().addAll(first, prev, index, next, add);
+        bottom.getChildren().addAll(first, prev, index, next, last, add);
         // 添加布局
         ((BorderPane) scene.getRoot()).setTop(top);
         ((BorderPane) scene.getRoot()).setCenter(table);

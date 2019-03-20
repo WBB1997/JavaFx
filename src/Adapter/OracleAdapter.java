@@ -148,7 +148,6 @@ public class OracleAdapter implements InfoManager {
             JOptionPane.showMessageDialog(null, s.getMessage(), "错误", JOptionPane.WARNING_MESSAGE);
         }
         PageControl.setRowCount(count);
-        System.out.println("RowCount：" + PageControl.getRowCount());
     }
 
     private void setAttribute(PreparedStatement ps, Student stu, int index) throws SQLException {

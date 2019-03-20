@@ -19,8 +19,8 @@ public class UpdateStudentPanel{
         StudentUI userInterface = new StudentUI(columnNames);
         dialog.getDialogPane().setContent(userInterface);
         userInterface.setFieldValues(student.getList());
-        TextField textField[] = userInterface.getFields();
-        textField[0].setEditable(false);
+        TextField[] textField = userInterface.getFields();
+        textField[0].setDisable(true);
         ButtonType submit = new ButtonType("Submit", ButtonBar.ButtonData.OK_DONE);
         ButtonType cancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
         dialog.setResizable(true);
