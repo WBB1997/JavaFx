@@ -1,10 +1,10 @@
-package Util;
+package Adapter;
 
 import Charactor.Student;
 
 import java.util.List;
 
-public interface InfoManager {
+public interface Adapter {
     //增加
     String add(Student student);
 

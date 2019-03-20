@@ -1,7 +1,6 @@
 package Adapter;
 
 import Charactor.Student;
-import Util.InfoManager;
 import Util.XmlUtil;
 
 import javax.swing.*;
@@ -9,17 +8,41 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OracleAdapter implements InfoManager {
+public class OracleAdapterImpl implements Adapter {
     private Connection connection = null;
-    private static String TableName = XmlUtil.getTableName();
+    private ArrayList<String> TableList;
+    private int TableIndex = 0;
+    private String DataBaseName;
+    private String PassWord;
+    private String UserName;
+
+    public OracleAdapterImpl() {
+        DataBaseName = XmlUtil.getAttribute("DataBaseName");
+        PassWord = XmlUtil.getAttribute("PassWord");
+        UserName = XmlUtil.getAttribute("UserName");
+    }
+
+    public ArrayList<String> getTableNameList(){
+
+    }
+
 
     @Override
     public String add(Student student) {
         String state = "添加成功！"; // 执行状态
         PreparedStatement ps = null;
-        String sql = "INSERT INTO " + TableName + " VALUES(?,?,?,?,?,?,?)";
+        List<String> ColumnNames = getColumnNames();
+        StringBuilder sql_part = new StringBuilder();
+        for(int i = 0; i < ColumnNames.size(); i++){
+            sql_part.append('?');
+            if(i == ColumnNames.size() - 1)
+                sql_part.append(')');
+            else
+                sql_part.append(',');
+        }
+        String sql = "INSERT INTO " + TableList.get(TableIndex) + " VALUES(" + sql_part;
         try {
-            connection = new DBConnection().getConnection();
+            connection = DBConnection.getConnection();
             ps = connection.prepareStatement(sql);
             setAttribute(ps, student, 1);
             ps.executeUpdate();
@@ -37,12 +60,11 @@ public class OracleAdapter implements InfoManager {
     public String delete(Student student) {
         PreparedStatement ps = null;
         String state = "删除成功！";
-        String sql = "DELETE FROM " + TableName + " WHERE Sno = ? AND Cno = ?";
+        String sql = "DELETE FROM " + TableName + " WHERE Sno = ?";
         try {
-            connection = new DBConnection().getConnection();
+            connection = DBConnection.getConnection();
             ps = connection.prepareStatement(sql);
             ps.setString(1, student.getSno());
-            ps.setString(2, student.getCno());
             ps.executeUpdate();
             return state;
         } catch (SQLException s) {
@@ -59,13 +81,12 @@ public class OracleAdapter implements InfoManager {
         PreparedStatement ps = null;
         String state = "更新成功！";
         String sql = "UPDATE " + TableName + " SET SNO=?,SNAME=?,SSEX=?,SAGE=?,SDEPT=?,CNO=?,GRADE=? " +
-                "WHERE Sno = ? AND Cno = ?";
+                "WHERE Sno = ?";
         try {
-            connection = new DBConnection().getConnection();
+            connection = DBConnection.getConnection();
             ps = connection.prepareStatement(sql);
             setAttribute(ps, newone, 1);
             ps.setString(8, oldone.getSno());
-            ps.setString(9, oldone.getCno());
             ps.executeUpdate();
             return state;
         } catch (SQLException s) {
@@ -98,7 +119,7 @@ public class OracleAdapter implements InfoManager {
         String sql = "SELECT * FROM " + TableName;
         List<String> columnNames = new ArrayList<>();
         try {
-            connection = new DBConnection().getConnection();
+            connection = DBConnection.getConnection();
             st = connection.createStatement();
             rs = st.executeQuery(sql);
             ResultSetMetaData rsmd = rs.getMetaData();
@@ -138,7 +159,7 @@ public class OracleAdapter implements InfoManager {
         int count = 0;
         Connection connection;
         try {
-            connection = new DBConnection().getConnection();
+            connection = DBConnection.getConnection();
             st = connection.createStatement();
             rs = st.executeQuery(sql);
             while (rs.next())
@@ -153,7 +174,7 @@ public class OracleAdapter implements InfoManager {
     private void setAttribute(PreparedStatement ps, Student stu, int index) throws SQLException {
         ps.setString(index, stu.getSno());
         ps.setString(index + 1, stu.getSname());
-        ps.setString(index + 2, stu.getSsex());
+        ps.setString(index + 2, stu.getSSex());
         try {
             ps.setInt(index + 3, Integer.parseInt(stu.getSage()));
         }catch (NumberFormatException e){
@@ -220,7 +241,7 @@ public class OracleAdapter implements InfoManager {
         Statement st = null;
         ResultSet rs = null;
         try {
-            connection = new DBConnection().getConnection();
+            connection = DBConnection.getConnection();
             st = connection.createStatement();
             rs = st.executeQuery(sql);
             return getResult(rs);

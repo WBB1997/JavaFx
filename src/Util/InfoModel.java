@@ -33,7 +33,7 @@ public class InfoModel extends AbstractTableModel {
 
     public Object getValueAt(int rowIndex, int columnIndex) {
         Student student = studentList.get(rowIndex);
-        List<String> list = student.getList();
+        List<Object> list = student.getList();
         return list.get(columnIndex);
     }
 

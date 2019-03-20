@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <config>
-    <ClassName>OracleAdapter</ClassName>
+    <AdapterPath>OracleAdapter</AdapterPath>
     <DataBaseName>orclpdb</DataBaseName> <!--数据库名-->
-    <TableName>STUDENT</TableName> <!--表名-->
     <UserName>wubeibei</UserName> <!--用户名-->
     <PassWord>123456</PassWord>  <!--密码-->
 </config>

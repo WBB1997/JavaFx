@@ -27,7 +27,7 @@ public class AddStudentPanel {
         dialog.setResultConverter(param -> {
             if (param == submit) {
                 Student res = new Student();
-                List<String> tmp = new ArrayList<>();
+                List<Object> tmp = new ArrayList<>();
                 for (TextField aTextField : textField)
                     tmp.add(aTextField.getText());
                 res.setList(tmp);

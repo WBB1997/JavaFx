@@ -41,11 +41,11 @@ class StudentUI extends BorderPane {
             fields[i].setText("");
     }
 
-    void setFieldValues(List<String> strings) throws IllegalArgumentException {
+    void setFieldValues(List<Object> strings) throws IllegalArgumentException {
         if (strings.size() != size)
             throw new IllegalArgumentException("数据个数不匹配");
         for (int i = 0; i < size; i++)
-            fields[i].setText(strings.get(i));
+            fields[i].setText(strings.get(i).toString());
     }
 
     List<String> getFieldValues() {

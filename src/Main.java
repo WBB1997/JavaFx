@@ -1,6 +1,6 @@
 import Adapter.PageControl;
 import Charactor.Student;
-import Util.InfoManager;
+import Adapter.Adapter;
 import Util.XmlUtil;
 import Windows.AddStudentPanel;
 import Windows.UpdateStudentPanel;
@@ -40,7 +40,7 @@ public class Main extends Application {
         HBox top = new HBox();
         top.setSpacing(3);
         ComboBox<String> menu = new ComboBox<>();
-        menu.getItems().addAll(((InfoManager) XmlUtil.getBean()).getColumnNames());
+        menu.getItems().addAll(((Adapter) XmlUtil.getBean()).getColumnNames());
         menu.setValue(menu.getItems().get(0));
         TextField input = new TextField();
         // 设定输入框占用所有空余空间
@@ -51,7 +51,7 @@ public class Main extends Application {
         //添加table
         table = new TableView<>();
         //定义数据模型
-        ObservableList<Student> data = FXCollections.observableArrayList(((InfoManager) XmlUtil.getBean()).get());
+        ObservableList<Student> data = FXCollections.observableArrayList(((Adapter) XmlUtil.getBean()).get());
         //创建，添加列
         table.getColumns().addAll(createTableColumn());
         //添加模型
@@ -85,21 +85,21 @@ public class Main extends Application {
         // 触发事件
         flash.setOnAction(event -> {
             PageControl.setFirstPage();
-            table.setItems(FXCollections.observableArrayList(((InfoManager) XmlUtil.getBean()).get()));
+            table.setItems(FXCollections.observableArrayList(((Adapter) XmlUtil.getBean()).get()));
             input.setText("");
             flag = false;
         });
         search.setOnAction(event -> {
             String args = menu.getValue();
-            InfoManager infoManager = (InfoManager) XmlUtil.getBean();
+            Adapter adapter = (Adapter) XmlUtil.getBean();
             String keyword = input.getText();
             if (keyword.length() > 0) {
                 if (!flag)
                     PageControl.setFirstPage();
-                table.setItems(FXCollections.observableArrayList((infoManager.get(args, input.getText()))));
+                table.setItems(FXCollections.observableArrayList((adapter.get(args, input.getText()))));
                 flag = true;
             } else {
-                table.setItems(FXCollections.observableArrayList((infoManager.get())));
+                table.setItems(FXCollections.observableArrayList((adapter.get())));
                 flag = false;
             }
             index.setText(Integer.toString(PageControl.getPage() + 1));
@@ -121,14 +121,14 @@ public class Main extends Application {
             dosomething();
         });
         add.setOnAction(event -> {
-            AddStudentPanel addStudentPanel = new AddStudentPanel(((InfoManager) XmlUtil.getBean()).getColumnNames());
+            AddStudentPanel addStudentPanel = new AddStudentPanel(((Adapter) XmlUtil.getBean()).getColumnNames());
             Optional<Student> result;
             boolean flag = true;
             while (flag) {
                 result = addStudentPanel.showAndWait();
                 if (result.isPresent()) {
                     Student student = result.get();
-                    String state = ((InfoManager) XmlUtil.getBean()).add(student);
+                    String state = ((Adapter) XmlUtil.getBean()).add(student);
                     if ("添加成功！".equals(state))
                         flag = false;
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -144,9 +144,9 @@ public class Main extends Application {
     }
 
     private List<TableColumn<Student, String>> createTableColumn() {
-        InfoManager infoManager = (InfoManager) XmlUtil.getBean();
+        Adapter adapter = (Adapter) XmlUtil.getBean();
         ArrayList<TableColumn<Student, String>> res = new ArrayList<>();
-        List<String> columnNames = infoManager.getColumnNames();
+        List<String> columnNames = adapter.getColumnNames();
         for (String str : columnNames) {
             TableColumn<Student, String> tmp = new TableColumn<>(str);
             tmp.setCellValueFactory(new PropertyValueFactory<>(str.substring(0, 1) + str.toLowerCase().substring(1)));
@@ -158,7 +158,7 @@ public class Main extends Application {
 
     private void dosomething(){
         if(!flag) {
-            table.setItems(FXCollections.observableArrayList((((InfoManager) XmlUtil.getBean()).get())));
+            table.setItems(FXCollections.observableArrayList((((Adapter) XmlUtil.getBean()).get())));
             index.setText(Integer.toString(PageControl.getPage() + 1));
         }else
             search.fire();
@@ -179,7 +179,7 @@ public class Main extends Application {
                     alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setTitle("Information");
                     alert.setHeaderText(null);
-                    alert.setContentText(((InfoManager) XmlUtil.getBean()).delete(itemProperty.getValue()));
+                    alert.setContentText(((Adapter) XmlUtil.getBean()).delete(itemProperty.getValue()));
                     alert.showAndWait();
                     dosomething();
                 }
@@ -187,14 +187,14 @@ public class Main extends Application {
             });
             updMenuItem.setOnAction(event -> {
                 ReadOnlyProperty<Student> itemProperty = table.getSelectionModel().selectedItemProperty();
-                UpdateStudentPanel updateStudentPanel = new UpdateStudentPanel(((InfoManager) XmlUtil.getBean()).getColumnNames(), itemProperty.getValue());
+                UpdateStudentPanel updateStudentPanel = new UpdateStudentPanel(((Adapter) XmlUtil.getBean()).getColumnNames(), itemProperty.getValue());
                 Optional<Student> result;
                 boolean flag = true;
                 while (flag) {
                     result = updateStudentPanel.showAndWait();
                     if (result.isPresent()) {
                         Student student = result.get();
-                        String state = ((InfoManager) XmlUtil.getBean()).update(itemProperty.getValue(), student);
+                        String state = ((Adapter) XmlUtil.getBean()).update(itemProperty.getValue(), student);
                         if ("更新成功！".equals(state))
                             flag = false;
                         Alert alert = new Alert(Alert.AlertType.INFORMATION);
