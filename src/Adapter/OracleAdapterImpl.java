@@ -20,15 +20,31 @@ public class OracleAdapterImpl implements Adapter {
         DataBaseName = XmlUtil.getAttribute("DataBaseName");
         PassWord = XmlUtil.getAttribute("PassWord");
         UserName = XmlUtil.getAttribute("UserName");
+        TableList = getTableNameList();
     }
 
-    public ArrayList<String> getTableNameList(){
-
+    public ArrayList<String> getTableNameList() {
+        ArrayList<String> res = new ArrayList<>();
+        Statement st = null;
+        ResultSet rs = null;
+        String sql = "SELECT TABLE_NAME FROM ALL_TABLE WHERE OWNER='" + UserName + "'";
+        try {
+            connection = DBConnection.getConnection(DataBaseName, UserName, PassWord);
+            st = connection.createStatement();
+            rs = st.executeQuery(sql);
+            while (rs.next()) {
+                res.add(rs.getString(1));
+            }
+        } catch (SQLException s) {
+            s.printStackTrace();
+        } finally {
+            closeResource(connection, st, rs);
+        }
+        return res;
     }
 
 
-    @Override
-    public String add(Student student) {
+    public String add(Class clazz) {
         String state = "添加成功！"; // 执行状态
         PreparedStatement ps = null;
         List<String> ColumnNames = getColumnNames();
@@ -42,7 +58,7 @@ public class OracleAdapterImpl implements Adapter {
         }
         String sql = "INSERT INTO " + TableList.get(TableIndex) + " VALUES(" + sql_part;
         try {
-            connection = DBConnection.getConnection();
+            connection = DBConnection.getConnection(DataBaseName, UserName, PassWord);
             ps = connection.prepareStatement(sql);
             setAttribute(ps, student, 1);
             ps.executeUpdate();
@@ -56,13 +72,12 @@ public class OracleAdapterImpl implements Adapter {
         return state;
     }
 
-    @Override
     public String delete(Student student) {
         PreparedStatement ps = null;
         String state = "删除成功！";
         String sql = "DELETE FROM " + TableName + " WHERE Sno = ?";
         try {
-            connection = DBConnection.getConnection();
+            connection = DBConnection.getConnection(DataBaseName, UserName, PassWord);
             ps = connection.prepareStatement(sql);
             ps.setString(1, student.getSno());
             ps.executeUpdate();
@@ -76,14 +91,13 @@ public class OracleAdapterImpl implements Adapter {
         return state;
     }
 
-    @Override
     public String update(Student oldone, Student newone) {
         PreparedStatement ps = null;
         String state = "更新成功！";
         String sql = "UPDATE " + TableName + " SET SNO=?,SNAME=?,SSEX=?,SAGE=?,SDEPT=?,CNO=?,GRADE=? " +
                 "WHERE Sno = ?";
         try {
-            connection = DBConnection.getConnection();
+            connection = DBConnection.getConnection(DataBaseName, UserName, PassWord);
             ps = connection.prepareStatement(sql);
             setAttribute(ps, newone, 1);
             ps.setString(8, oldone.getSno());
@@ -98,28 +112,25 @@ public class OracleAdapterImpl implements Adapter {
         return state;
     }
 
-    @Override
     public List<Student> get(String args, String keyword) {
         setRowCount("SELECT COUNT(*) FROM " + TableName + " WHERE " + args + "='" + keyword + "'");
         String sql = getPageSql("SELECT * FROM " + TableName + " WHERE " + args + "='" + keyword + "'", PageControl.getPage());
         return getList(sql);
     }
 
-    @Override
     public List<Student> get() {
         setRowCount("SELECT COUNT(*) FROM " + TableName);
         String sql = getPageSql("SELECT * FROM " + TableName, PageControl.getPage());
         return getList(sql);
     }
 
-    @Override
     public List<String> getColumnNames() {
         Statement st = null;
         ResultSet rs = null;
         String sql = "SELECT * FROM " + TableName;
         List<String> columnNames = new ArrayList<>();
         try {
-            connection = DBConnection.getConnection();
+            connection = DBConnection.getConnection(DataBaseName, UserName, PassWord);
             st = connection.createStatement();
             rs = st.executeQuery(sql);
             ResultSetMetaData rsmd = rs.getMetaData();
@@ -241,7 +252,7 @@ public class OracleAdapterImpl implements Adapter {
         Statement st = null;
         ResultSet rs = null;
         try {
-            connection = DBConnection.getConnection();
+            connection = DBConnection.getConnection(DataBaseName, UserName, PassWord);
             st = connection.createStatement();
             rs = st.executeQuery(sql);
             return getResult(rs);
